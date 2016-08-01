@@ -1,0 +1,71 @@
+
+#titleText {
+  font-family: "Open-Sans", arial, sans-serif;
+  z-index: 999;
+}
+text, td {
+  font: 15px arial, sans-serif;
+}
+#map {
+  height: 650px;
+  width: 100%;
+  float: left;
+  cursor: crosshair;
+  z-index: 1;
+}
+/*stying for text and image content */
+#displayText, #displayImage {
+  text-align: left;
+  padding-left: 6px;
+}
+img {
+  width: 300px;
+}
+#rightPanel {
+  height: 100%;
+  background-color: white;
+  margin: -10px -10px 0px 0px;
+}
+/* styling for the geo obs names displayed in the legend */
+.legend {
+ font-weight: bold;
+ padding: 10px;
+ stroke: black;
+ stroke-width: 0.5px;
+}
+#Fossil {
+  color: #e41a1c;
+}
+#Rock {
+  color: #377eb8;
+}
+#Measurement {
+  color: #4daf4a; 
+}
+#Borehole {
+  color: #984ea3;
+}
+
+/* styling for geo obs data displayed on the map */
+.geo_obs {
+  stroke: black;
+  stroke-width: 0.5;
+}
+.Fossil {
+  fill: #e41a1c;
+  opacity: 1;
+}
+.Rock {
+  fill: #377eb8;
+  opacity: 1;
+}
+.Measurement {
+  fill: #4daf4a;
+  opacity: 1;
+}
+.Borehole {
+  fill: #984ea3; 
+  opacity: 1;
+}
+
+
