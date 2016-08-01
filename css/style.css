@@ -1,7 +1,5 @@
-
 #titleText {
   font-family: "Open-Sans", arial, sans-serif;
-  z-index: 999;
 }
 text, td {
   font: 15px arial, sans-serif;
@@ -11,7 +9,6 @@ text, td {
   width: 100%;
   float: left;
   cursor: crosshair;
-  z-index: 1;
 }
 /*stying for text and image content */
 #displayText, #displayImage {
@@ -45,7 +42,6 @@ img {
 #Borehole {
   color: #984ea3;
 }
-
 /* styling for geo obs data displayed on the map */
 .geo_obs {
   stroke: black;

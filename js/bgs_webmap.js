@@ -7,109 +7,104 @@ L.tileLayer(
     maxZoom: 18,
     }).addTo(map);
 
-
+// providing options for the geocode plugin and loading it into the map
 var geocodeKey = '09213753bc050604c9bc923f8b1cebcf';
-
 var options = {
     key: geocodeKey,
     position: 'topleft',
     limit: 10
 };
-
 var control = L.Control.openCageSearch(options).addTo(map);
-
 
 // create a legend and add it to the map
 var Legend = L.Control.extend({  
   options: {
     position: 'topright'
   },
-
   onAdd: function (map) {
         var legend = L.DomUtil.create('div', 'map-legend', L.DomUtil.get('map'));
-        var rightPanel = '<div id="rightPanel"><div id="legend"></div><div id="displayText"></div><div id="displayImage"></div></div>'
+        var rightPanel = '<div id="rightPanel"><div id="legendText"></div><div id="displayText"></div><div id="displayImage"></div></div>'
         legend.innerHTML =  rightPanel;
     return legend;
   }
 });
-
 map.addControl(new Legend());
 
 // create string to add legend in the map panel
-var legendText = '<text class="legend" onclick="selectLayer(this.id)" id="Fossil">Fossil</text><text class="legend" onclick="selectLayer(this.id)" id="Measurement">Measurement</text><text class="legend" onclick="selectLayer(this.id)" id="Rock">Rock</text><text class="legend" onclick="selectLayer(this.id)" id="Borehole">Borehole</text>'
-$(legend).html(legendText);
+var legend = '<text class="legend" onclick="selectLayer(this.id)" id="Fossil">Fossil</text><text class="legend" onclick="selectLayer(this.id)" id="Measurement">Measurement</text><text class="legend" onclick="selectLayer(this.id)" id="Rock">Rock</text><text class="legend" onclick="selectLayer(this.id)" id="Borehole">Borehole</text>'
+$(legendText).html(legend);
 
 
-/* Initialize the SVG layer */
+// Initialize the SVG layer 
 map._initPathRoot()    
 
-/* We simply pick up the SVG from the map object */
+// select the SVG from the map object 
 var svg = d3.select("#map").select("svg");
-
 var g = svg.append("g")
 		.attr("class", "geo_obs");
 
+// read in the bgs data from a geojson file
 d3.json("data//bgs_data.geojson", function(collection) {
-/* Add a LatLng object to each item in the dataset */
-collection.features.forEach(function(d) {
-	d.LatLng = new L.LatLng(d.geometry.coordinates[1],
-							d.geometry.coordinates[0])
-})
+    // Add a LatLng object to each item in the dataset
+    collection.features.forEach(function(d) {
+    	d.LatLng = new L.LatLng(d.geometry.coordinates[1],
+    							d.geometry.coordinates[0])
+    })
 
-// create SVG elements for each item in the bgs datas
-var feature = g.selectAll("circle")
-	.data(collection.features)
-	.enter()
-	.append("circle")
-	.attr("r", 6)
-    .attr("class", function (d) {return d.properties.Type})
-    .attr("id", function (d) {return d.properties.Name})
-    .style("opacity", "1")
-    .on("click", function(d) {
-    	lat = d.geometry.coordinates[0]
-    	long = d.geometry.coordinates[1]
+    // create SVG elements for each item in the bgs datas
+    var feature = g.selectAll("circle")
+    	.data(collection.features)
+    	.enter()
+    	.append("circle")
+    	.attr("r", 6)
+        .attr("class", function (d) {return d.properties.Type})
+        .attr("id", function (d) {return d.properties.Name})
+        .style("opacity", "1")
+        .on("click", function(d) {
+        	lat = d.geometry.coordinates[0]
+        	long = d.geometry.coordinates[1]
 
-        // create string to display geo obs attributes
-        textString = "<table> <tr><td>" + "<b>" + "Geological observation " + d.properties.Name + "</b>" + "</td></tr>" +
-            "<tr><td>" + "Rock name: " + d.properties.Rock_name + "</td></tr>" +
-            "<tr><td>" + "Type: " + d.properties.Type + "</td></tr>" +
-            "<tr><td>" + "Lat: " + lat.toPrecision(6) + "</td></tr>" +
-            "<tr><td>" + "Long: " + long.toPrecision(6) + "</td></tr>" +
-            "<tr><td>" + "Date: " + d.properties.Date + "</td></tr>" +
-            "<tr><td>" + "Time: " + d.properties.Time + "</td></tr>" +
-            "<tr><td>" + "Elevation value: " + d.properties.Z + "</td></tr>" +
-            "<tr><td>" + "Porosity: " + d.properties.Porosity + "</td></tr>" +
-            "<tr><td>" + "Species: " + d.properties.Species + "</td></tr>" +
-            "<tr><td>" + "Recorded By: " + d.properties.Recorded_By + "</td></tr>" +
-			"<tr><td>" + "Drilled depth (m): " + d.properties.Drilled_depth + "</td></tr>" +
-            "</table>";
+            // create string to display geo obs attributes
+            textString = "<table> <tr><td>" + "<b>" + "Geological observation " + d.properties.Name + "</b>" + "</td></tr>" +
+                "<tr><td>" + "Rock name: " + d.properties.Rock_name + "</td></tr>" +
+                "<tr><td>" + "Type: " + d.properties.Type + "</td></tr>" +
+                "<tr><td>" + "Lat: " + lat.toPrecision(6) + "</td></tr>" +
+                "<tr><td>" + "Long: " + long.toPrecision(6) + "</td></tr>" +
+                "<tr><td>" + "Date: " + d.properties.Date + "</td></tr>" +
+                "<tr><td>" + "Time: " + d.properties.Time + "</td></tr>" +
+                "<tr><td>" + "Elevation value: " + d.properties.Z + "</td></tr>" +
+                "<tr><td>" + "Porosity: " + d.properties.Porosity + "</td></tr>" +
+                "<tr><td>" + "Species: " + d.properties.Species + "</td></tr>" +
+                "<tr><td>" + "Recorded By: " + d.properties.Recorded_By + "</td></tr>" +
+    			"<tr><td>" + "Drilled depth (m): " + d.properties.Drilled_depth + "</td></tr>" +
+                "</table>";
 
-        $('#displayText').html(textString);
+            $('#displayText').html(textString);
 
-        // isolate the image attribute for a geo obs and display within the web document
-        // check first if an image file is avialable
-    	imageName = d.properties.Image;
-        if (imageName === undefined) {
-            imageString = "<text> No image available for this sample </text>";
-        } else { 
-            imageString = "<img src='images/"+imageName + "' alt='No image available' >"
-        };
-        $('#displayImage').html(imageString);
-    
-        })
+            // isolate the image attribute for a geo obs and display within the web document
+            // check first if an image file is avialable
+        	imageName = d.properties.Image;
+            if (imageName === undefined) {
+                imageString = "<text> No image available for this sample </text>";
+            } else { 
+                imageString = "<img src='images/"+imageName + "' alt='No image available' >"
+            };
+            $('#displayImage').html(imageString);
+        
+            })
 
-map.on("viewreset", update);
-update();
+    map.on("viewreset", update);
+    update();
 
-function update() {
-	feature.attr("transform", 
-	function(d) { 
-		return "translate("+ 
-			map.latLngToLayerPoint(d.LatLng).x +","+ 
-			map.latLngToLayerPoint(d.LatLng).y +")";
-		}
-	)
-}
+    function update() {
+    	feature.attr("transform", 
+    	function(d) { 
+    		return "translate("+ 
+    			map.latLngToLayerPoint(d.LatLng).x +","+ 
+    			map.latLngToLayerPoint(d.LatLng).y +")";
+    		}
+    	)
+    }
 })			 
 
 
